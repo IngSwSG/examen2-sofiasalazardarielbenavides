@@ -24,4 +24,34 @@ class MaterialController extends Controller
         ], 201);
     }
 
+     public function index()
+    {
+        $materiales = Material::with('categoria')->get();
+
+        return response()->json([
+            'materiales' => $materiales
+        ]);
+    }
+
+
+    public function update(Request $request, $id)
+    {
+        $material = Material::findOrFail($id);
+
+        $validated = $request->validate([
+            'unidadMedida' => 'sometimes|string',
+            'descripcion' => 'sometimes|string',
+            'ubicacion' => 'sometimes|string',
+            'idCategoria' => 'sometimes|exists:categorias,idCategoria',
+        ]);
+
+        $material->update($validated);
+
+        return response()->json([
+            'message' => 'Material actualizado correctamente.',
+            'material' => $material
+        ]);
+    }
+
+
 }
